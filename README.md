@@ -2,12 +2,14 @@
 
 ## Instalasi
 
-`npm i feedid`
+```
+npm i feedid
+```
 
 ## Contoh
 
 ```javascript
-const feedid = requrie('feedid');
+const feedid = require('feedid');
 
 feedid.tempo
   .bisnis()
