@@ -1,6 +1,6 @@
 {
   "name": "feedid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Parser RSS Situs Berita Indonesia",
   "main": "./src/index.js",
   "scripts": {
