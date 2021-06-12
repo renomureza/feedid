@@ -71,6 +71,6 @@ module.exports = {
   oto: () => crawler('https://oto.detik.com/rss', responseParser),
   travel: () => crawler('https://travel.detik.com/rss', responseParser),
   food: () => crawler('https://food.detik.com/rss', responseParser),
-  helath: () => crawler('https://health.detik.com/rss', responseParser),
+  health: () => crawler('https://health.detik.com/rss', responseParser),
   wolipop: () => crawler('https://wolipop.detik.com/rss', responseParser),
 };
