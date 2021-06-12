@@ -1,1 +1,1 @@
-# FeedId - RSS JSON Berita Indonesia
+# FeedId - Parser RSS Berita Indonesia
