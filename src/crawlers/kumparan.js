@@ -1,8 +1,9 @@
 const cheerio = require('cheerio');
 const crawler = require('../utils/crawler');
+const responseCreator = require('../utils/responseCreator');
 const xmlParser = require('../utils/xmlParser');
 
-const responseParser = async (xml) => {
+const responseParser = async (xml, withContent) => {
   const channel = await xmlParser(xml);
 
   const {
@@ -24,8 +25,11 @@ const responseParser = async (xml) => {
       enclosure: [enclosure],
     } = item[i];
 
-    const $ = cheerio.load(contentEncoded);
-    const content = $('p').text().trim();
+    let content = null;
+    if (withContent) {
+      const $ = cheerio.load(contentEncoded);
+      content = $('p').text().trim();
+    }
 
     data.push({
       title: title,
@@ -37,17 +41,19 @@ const responseParser = async (xml) => {
     });
   }
 
-  return {
-    title: title,
-    description:
-      'kumparan.com adalah platform media berita kolaboratif, terkini Indonesia hari ini yang menyajikan informasi news, sepak bola, ekonomi, politik, showbiz, lifestyle, otomotif, tekno dan travel',
-    link: link,
-    image: {
-      title: image.title[0],
-      url: image.url[0],
+  return responseCreator({
+    data: {
+      title: title,
+      description:
+        'kumparan.com adalah platform media berita kolaboratif, terkini Indonesia hari ini yang menyajikan informasi news, sepak bola, ekonomi, politik, showbiz, lifestyle, otomotif, tekno dan travel',
+      link: link,
+      image: {
+        title: image.title[0],
+        url: image.url[0],
+      },
+      posts: data,
     },
-    posts: data,
-  };
+  });
 };
 
 module.exports = {

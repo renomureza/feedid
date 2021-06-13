@@ -1,8 +1,9 @@
 const crawler = require('../utils/crawler');
 const contentParser = require('../utils/contentParser');
 const xmlParser = require('../utils/xmlParser');
+const responseCreator = require('../utils/responseCreator');
 
-const responseParser = async (xml) => {
+const responseParser = async (xml, withContent) => {
   const channel = await xmlParser(xml);
 
   const {
@@ -24,7 +25,11 @@ const responseParser = async (xml) => {
       enclosure: [enclosure],
     } = item[i];
 
-    const content = await contentParser(link, 'article');
+    let content = null;
+
+    if (withContent) {
+      content = await contentParser(link, 'article');
+    }
 
     posts.push({
       title: title,
@@ -36,27 +41,39 @@ const responseParser = async (xml) => {
     });
   }
 
-  return {
-    title: title,
-    description: description,
-    link: link,
-    image: {
-      title: image.title[0],
-      url: image.url[0],
+  return responseCreator({
+    data: {
+      title: title,
+      description: description,
+      link: link,
+      image: {
+        title: image.title[0],
+        url: image.url[0],
+      },
+      posts,
     },
-    posts,
-  };
+  });
 };
 
 module.exports = {
-  terbaru: () => crawler('https://www.suara.com/rss', responseParser),
-  bisnis: () => crawler('https://www.suara.com/rss/bisnis', responseParser),
-  bola: () => crawler('https://www.suara.com/rss/bola', responseParser),
-  lifestyle: () =>
-    crawler('https://www.suara.com/rss/lifestyle', responseParser),
-  entertainment: () =>
-    crawler('https://www.suara.com/rss/entertainment', responseParser),
-  otomotif: () => crawler('https://www.suara.com/rss/otomotif', responseParser),
-  tekno: () => crawler('https://www.suara.com/rss/tekno', responseParser),
-  health: () => crawler('https://www.suara.com/rss/health', responseParser),
+  terbaru: (withContent) =>
+    crawler('https://www.suara.com/rss', responseParser, withContent),
+  bisnis: (withContent) =>
+    crawler('https://www.suara.com/rss/bisnis', responseParser, withContent),
+  bola: (withContent) =>
+    crawler('https://www.suara.com/rss/bola', responseParser, withContent),
+  lifestyle: (withContent) =>
+    crawler('https://www.suara.com/rss/lifestyle', responseParser, withContent),
+  entertainment: (withContent) =>
+    crawler(
+      'https://www.suara.com/rss/entertainment',
+      responseParser,
+      withContent
+    ),
+  otomotif: (withContent) =>
+    crawler('https://www.suara.com/rss/otomotif', responseParser, withContent),
+  tekno: (withContent) =>
+    crawler('https://www.suara.com/rss/tekno', responseParser, withContent),
+  health: (withContent) =>
+    crawler('https://www.suara.com/rss/health', responseParser, withContent),
 };

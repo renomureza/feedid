@@ -1,21 +1,21 @@
 const cnn = require('./crawlers/cnn');
 const detik = require('./crawlers/detik');
-const okeZone = require('./crawlers/okeZone');
+const okezone = require('./crawlers/okezone');
 const kumparan = require('./crawlers/kumparan');
 const tempo = require('./crawlers/tempo');
 const suara = require('./crawlers/suara');
-const sindoNews = require('./crawlers/sindoNews');
+const sindonews = require('./crawlers/sindonews');
 const merdeka = require('./crawlers/merdeka');
 const cnbc = require('./crawlers/cnbc');
 
 module.exports = {
   cnn,
   detik,
-  okeZone,
+  okezone,
   kumparan,
   tempo,
   suara,
-  sindoNews,
+  sindonews,
   merdeka,
   cnbc,
 };

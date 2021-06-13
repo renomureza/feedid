@@ -2,7 +2,7 @@ const { default: axios } = require('axios');
 const responseCreator = require('./responseCreator');
 const ResponseError = require('./ResponseError');
 
-const crawler = async (rssUrl, callback) => {
+const crawler = async (rssUrl, callback, withContent = false) => {
   return axios
     .get(rssUrl, {
       headers: {
@@ -11,7 +11,7 @@ const crawler = async (rssUrl, callback) => {
       },
     })
     .then((res) => {
-      return callback(res.data);
+      return callback(res.data, withContent);
     })
     .catch((error) => {
       console.log(error);

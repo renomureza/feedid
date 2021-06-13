@@ -1,8 +1,9 @@
 const contentParser = require('../utils/contentParser');
 const crawler = require('../utils/crawler');
+const responseCreator = require('../utils/responseCreator');
 const xmlParser = require('../utils/xmlParser');
 
-const responseParser = async (xml) => {
+const responseParser = async (xml, withContent) => {
   const channel = await xmlParser(xml);
 
   const {
@@ -24,10 +25,11 @@ const responseParser = async (xml) => {
       enclosure: [enclosure],
     } = item[i];
 
-    const content = await contentParser(
-      link + '?page=all',
-      '.mdk-body-paragraph'
-    );
+    let content = null;
+
+    if (withContent) {
+      content = await contentParser(link + '?page=all', '.mdk-body-paragraph');
+    }
 
     const [, dsc] = description.split('/>');
 
@@ -41,34 +43,61 @@ const responseParser = async (xml) => {
     });
   }
 
-  return {
-    title: title,
-    description: description,
-    link: link,
-    image: {
-      title: image.title[0],
-      url: image.url[0],
+  return responseCreator({
+    data: {
+      title: title,
+      description: description,
+      link: link,
+      image: {
+        title: image.title[0],
+        url: image.url[0],
+      },
+      posts,
     },
-    posts,
-  };
+  });
 };
 
 module.exports = {
-  terbaru: () => crawler('https://www.merdeka.com/feed/', responseParser),
-  jakarta: () =>
-    crawler('https://www.merdeka.com/feed/jakarta', responseParser),
-  dunia: () => crawler('https://www.merdeka.com/feed/dunia', responseParser),
-  gaya: () => crawler('https://www.merdeka.com/feed/gaya', responseParser),
-  olahraga: () =>
-    crawler('https://www.merdeka.com/feed/olahraga', responseParser),
-  teknologi: () =>
-    crawler('https://www.merdeka.com/feed/teknologi', responseParser),
-  otomotif: () =>
-    crawler('https://www.merdeka.com/feed/otomotif', responseParser),
-  khas: () => crawler('https://www.merdeka.com/feed/khas', responseParser),
-  sehat: () => crawler('https://www.merdeka.com/feed/sehat', responseParser),
-  jabar: () => crawler('https://www.merdeka.com/feed/jabar', responseParser),
-  jatim: () => crawler('https://www.merdeka.com/feed/jatim', responseParser),
-  jateng: () => crawler('https://www.merdeka.com/feed/jateng', responseParser),
-  sumut: () => crawler('https://www.merdeka.com/feed/sumut', responseParser),
+  terbaru: (withContent) =>
+    crawler('https://www.merdeka.com/feed/', responseParser, withContent),
+  jakarta: (withContent) =>
+    crawler(
+      'https://www.merdeka.com/feed/jakarta',
+      responseParser,
+      withContent
+    ),
+  dunia: (withContent) =>
+    crawler('https://www.merdeka.com/feed/dunia', responseParser, withContent),
+  gaya: (withContent) =>
+    crawler('https://www.merdeka.com/feed/gaya', responseParser, withContent),
+  olahraga: (withContent) =>
+    crawler(
+      'https://www.merdeka.com/feed/olahraga',
+      responseParser,
+      withContent
+    ),
+  teknologi: (withContent) =>
+    crawler(
+      'https://www.merdeka.com/feed/teknologi',
+      responseParser,
+      withContent
+    ),
+  otomotif: (withContent) =>
+    crawler(
+      'https://www.merdeka.com/feed/otomotif',
+      responseParser,
+      withContent
+    ),
+  khas: (withContent) =>
+    crawler('https://www.merdeka.com/feed/khas', responseParser, withContent),
+  sehat: (withContent) =>
+    crawler('https://www.merdeka.com/feed/sehat', responseParser, withContent),
+  jabar: (withContent) =>
+    crawler('https://www.merdeka.com/feed/jabar', responseParser, withContent),
+  jatim: (withContent) =>
+    crawler('https://www.merdeka.com/feed/jatim', responseParser, withContent),
+  jateng: (withContent) =>
+    crawler('https://www.merdeka.com/feed/jateng', responseParser, withContent),
+  sumut: (withContent) =>
+    crawler('https://www.merdeka.com/feed/sumut', responseParser, withContent),
 };

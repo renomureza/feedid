@@ -1,11 +1,7 @@
 const { default: axios } = require('axios');
 const cheerio = require('cheerio');
 
-const contentParser = async (
-  postLink,
-  contentWrapperTag,
-  hasChildren = true
-) => {
+const contentParser = async (postLink, contentWrapperTag) => {
   const { data } = await axios.get(postLink, {
     headers: {
       'User-Agent':
@@ -14,12 +10,7 @@ const contentParser = async (
   });
 
   const $ = cheerio.load(data);
-
-  if (hasChildren) {
-    return $(contentWrapperTag).children('p').text().trim();
-  }
-
-  return $(contentWrapperTag).text().trim();
+  return $(contentWrapperTag).children('p').text().trim();
 };
 
 module.exports = contentParser;
