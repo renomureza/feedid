@@ -1,103 +1,19 @@
 const crawler = require('../utils/crawler');
-const contentParser = require('../utils/contentParser');
-const xmlParser = require('../utils/xmlParser');
-const responseCreator = require('../utils/responseCreator');
+const { parseRss } = require('../utils/parseRssInfo');
 
-const responseParser = async (xml, withContent) => {
-  const channel = await xmlParser(xml);
-
-  const {
-    title: [title],
-    description: [description],
-    link: [link],
-    image: [image],
-    item,
-  } = channel[0];
-
-  const posts = [];
-
-  for (let i = 0; i < item.length; i++) {
-    const {
-      link: [link],
-      title: [title],
-      pubDate: [pubDate],
-      'content:encoded': [contentEncoded],
-      enclosure: [enclosure],
-    } = item[i];
-
-    let content = null;
-
-    if (withContent) {
-      content = await contentParser(link, '#detikdetailtext');
-    }
-
-    posts.push({
-      title: title,
-      description: contentEncoded,
-      pubDate: new Date(pubDate).toISOString(),
-      link: link,
-      thumbnail: enclosure.$.url.replace('360', '1280').replace('90', '720'),
-      content,
-    });
-  }
-
-  return responseCreator({
-    data: {
-      title: title,
-      description: description,
-      link: link,
-      image: {
-        title: image.title[0],
-        url: image.url[0],
-      },
-      posts,
-    },
-  });
-};
+const parser = (xml) =>
+  parseRss({ xml, postKeys: { keys: { description: 'content:encoded' } } });
 
 module.exports = {
-  terbaru: (withContent) =>
-    crawler('https://www.cnnindonesia.com/rss', responseParser, withContent),
-  nasional: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/nasional/rss',
-      responseParser,
-      withContent
-    ),
-  internasional: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/internasional/rss',
-      responseParser,
-      withContent
-    ),
-  ekonomi: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/ekonomi/rss',
-      responseParser,
-      withContent
-    ),
-  olahraga: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/olahraga/rss',
-      responseParser,
-      withContent
-    ),
-  teknologi: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/teknologi/rss',
-      responseParser,
-      withContent
-    ),
-  hiburan: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/hiburan/rss',
-      responseParser,
-      withContent
-    ),
-  gayaHidup: (withContent) =>
-    crawler(
-      'https://www.cnnindonesia.com/gaya-hidup/rss',
-      responseParser,
-      withContent
-    ),
+  terbaru: () => crawler('https://www.cnnindonesia.com/rss', parser),
+  nasional: () => crawler('https://www.cnnindonesia.com/nasional/rss', parser),
+  internasional: () =>
+    crawler('https://www.cnnindonesia.com/internasional/rss', parser),
+  ekonomi: () => crawler('https://www.cnnindonesia.com/ekonomi/rss', parser),
+  olahraga: () => crawler('https://www.cnnindonesia.com/olahraga/rss', parser),
+  teknologi: () =>
+    crawler('https://www.cnnindonesia.com/teknologi/rss', parser),
+  hiburan: () => crawler('https://www.cnnindonesia.com/hiburan/rss', parser),
+  gayaHidup: () =>
+    crawler('https://www.cnnindonesia.com/gaya-hidup/rss', parser),
 };

@@ -1,89 +1,22 @@
-const contentParser = require('../utils/contentParser');
-const xmlParser = require('../utils/xmlParser');
 const crawler = require('../utils/crawler');
-const responseCreator = require('../utils/responseCreator');
+const { parseRss } = require('../utils/parseRssInfo');
 
-const responseParser = async (xml, withContent) => {
-  const channel = await xmlParser(xml);
-
-  const {
-    title: [title],
-    description: [description],
-    link: [link],
-    image: [image],
-    item,
-  } = channel[0];
-
-  const posts = [];
-
-  for (let i = 0; i < item.length; i++) {
-    const {
-      link: [link],
-      title: [title],
-      description: [description],
-      pubDate: [pubDate],
-      'media:content': [mediaContent],
-    } = item[i];
-
-    let content = null;
-
-    if (withContent) {
-      content = await contentParser(link, '#content', false);
-    }
-
-    posts.push({
-      title: title,
-      description: description,
-      pubDate: new Date(pubDate).toISOString(),
-      link: link,
-      thumbnail: mediaContent.$.url,
-      content,
-    });
-  }
-
-  return responseCreator({
-    data: {
-      title: title,
-      description: description,
-      link: link,
-      image: {
-        title: image.title[0],
-        url: image.url[0],
-      },
-      posts,
-    },
-  });
-};
+const parser = (xml) =>
+  parseRss({ xml, postKeys: { thumbnail: 'media:content' } });
 
 module.exports = {
-  terbaru: (withContent) =>
-    crawler('https://www.sindonews.com/rss', responseParser, withContent),
-  nasional: (withContent) =>
-    crawler('https://nasional.sindonews.com/rss', responseParser, withContent),
-  metro: (withContent) =>
-    crawler('https://metro.sindonews.com/rss', responseParser, withContent),
-  ekbis: (withContent) =>
-    crawler('https://ekbis.sindonews.com/rss', responseParser, withContent),
-  international: (withContent) =>
-    crawler(
-      'https://international.sindonews.com/rss',
-      responseParser,
-      withContent
-    ),
-  daerah: (withContent) =>
-    crawler('https://daerah.sindonews.com/rss', responseParser, withContent),
-  sports: (withContent) =>
-    crawler('https://sports.sindonews.com/rss', responseParser, withContent),
-  otomotif: (withContent) =>
-    crawler('https://otomotif.sindonews.com/rss', responseParser, withContent),
-  tekno: (withContent) =>
-    crawler('https://tekno.sindonews.com/rss', responseParser, withContent),
-  sains: (withContent) =>
-    crawler('https://sains.sindonews.com/rss', responseParser, withContent),
-  edukasi: (withContent) =>
-    crawler('https://edukasi.sindonews.com/rss', responseParser, withContent),
-  lifestyle: (withContent) =>
-    crawler('https://lifestyle.sindonews.com/rss', responseParser, withContent),
-  kalam: (withContent) =>
-    crawler('https://kalam.sindonews.com/rss', responseParser, withContent),
+  terbaru: () => crawler('https://www.sindonews.com/rss', parser),
+  nasional: () => crawler('https://nasional.sindonews.com/rss', parser),
+  metro: () => crawler('https://metro.sindonews.com/rss', parser),
+  ekbis: () => crawler('https://ekbis.sindonews.com/rss', parser),
+  international: () =>
+    crawler('https://international.sindonews.com/rss', parser),
+  daerah: () => crawler('https://daerah.sindonews.com/rss', parser),
+  sports: () => crawler('https://sports.sindonews.com/rss', parser),
+  otomotif: () => crawler('https://otomotif.sindonews.com/rss', parser),
+  tekno: () => crawler('https://tekno.sindonews.com/rss', parser),
+  sains: () => crawler('https://sains.sindonews.com/rss', parser),
+  edukasi: () => crawler('https://edukasi.sindonews.com/rss', parser),
+  lifestyle: () => crawler('https://lifestyle.sindonews.com/rss', parser),
+  kalam: () => crawler('https://kalam.sindonews.com/rss', parser),
 };

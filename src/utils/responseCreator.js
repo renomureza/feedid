@@ -1,8 +1,9 @@
-const responseCreator = ({ data = null, message = null }) => {
+const responseCreator = (dataOrMessage) => {
+  const isMessage = typeof dataOrMessage === 'string' ? true : false;
   return {
-    success: data ? true : false,
-    message,
-    data,
+    success: isMessage ? false : true,
+    message: isMessage ? dataOrMessage : null,
+    data: !isMessage ? dataOrMessage : null,
   };
 };
 
