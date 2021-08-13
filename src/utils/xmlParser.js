@@ -5,6 +5,10 @@ const xmlParser = async (xml) => {
     rss: { channel },
   } = await xml2js.parseStringPromise(xml, {
     trim: true,
+    explicitArray: false,
+    attrkey: false,
+    mergeAttrs: true,
+    normalize: true,
   });
 
   return channel;
